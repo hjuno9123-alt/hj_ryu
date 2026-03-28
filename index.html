@@ -598,21 +598,42 @@ function showOverlay(text) {
 function hideOverlay() { document.getElementById('overlay').classList.add('hide'); }
 
 // ── Google Sheets API ────────────────────────────────────
-async function loadData() {
+// JSONP 방식으로 데이터 로드 (CORS 우회)
+function loadData() {
   showOverlay('데이터 불러오는 중...');
-  try {
-    const res = await fetch(APPS_URL + '?t=' + Date.now());
-    const text = await res.text();
-    const parsed = JSON.parse(text);
+
+  const callbackName = 'schedCallback_' + Date.now();
+  const script = document.createElement('script');
+
+  const timer = setTimeout(() => {
+    hideOverlay();
+    delete window[callbackName];
+    document.body.removeChild(script);
+    showToast('데이터 로드 실패. 오프라인 모드로 시작합니다.', 'error');
+    renderAll();
+  }, 8000);
+
+  window[callbackName] = function(parsed) {
+    clearTimeout(timer);
+    hideOverlay();
+    delete window[callbackName];
+    try { document.body.removeChild(script); } catch(e) {}
     if (parsed && typeof parsed === 'object') {
       if (parsed.members) members = parsed.members;
       if (parsed.data) allData = parsed.data;
     }
-  } catch(e) {
+    renderAll();
+  };
+
+  script.src = APPS_URL + '?callback=' + callbackName + '&t=' + Date.now();
+  script.onerror = function() {
+    clearTimeout(timer);
+    hideOverlay();
+    delete window[callbackName];
     showToast('데이터 로드 실패. 오프라인 모드로 시작합니다.', 'error');
-  }
-  hideOverlay();
-  renderAll();
+    renderAll();
+  };
+  document.body.appendChild(script);
 }
 
 async function saveData() {
@@ -624,12 +645,13 @@ async function saveData() {
 
   try {
     const payload = JSON.stringify({ members, data: allData });
-    const res = await fetch(APPS_URL, {
+    // no-cors 모드로 POST (응답은 읽을 수 없지만 저장은 됨)
+    await fetch(APPS_URL, {
       method: 'POST',
+      mode: 'no-cors',
       body: payload,
       headers: { 'Content-Type': 'text/plain' }
     });
-    await res.text();
     showToast('저장 완료! ✓', 'success');
     const st = document.getElementById('saveStatus');
     st.classList.add('show');
