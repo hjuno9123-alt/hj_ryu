@@ -669,37 +669,29 @@ function saveData() {
     hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
   });
 
-  const chunks = [
-    { members, lastViewedWeek: getWeekKey(currentBaseWed), hiddenColsByWeek: hiddenSerial, hiddenMembers: Array.from(hiddenMembers) },
-    { data: allData },
-    { summaryData, memoData }
-  ];
+  const payload = encodeURIComponent(JSON.stringify({
+    members,
+    data: allData,
+    summaryData,
+    memoData,
+    lastViewedWeek: getWeekKey(currentBaseWed),
+    hiddenColsByWeek: hiddenSerial,
+    hiddenMembers: Array.from(hiddenMembers)
+  }));
 
-  function sendNext(idx) {
-    if (idx >= chunks.length) {
+  jsonp(APPS_URL + '?action=save&payload=' + payload + '&t=' + Date.now(), function(err, res) {
+    if (!err && res && res.status === 'ok') {
       showToast('저장 완료! ✓', 'success');
       const st = document.getElementById('saveStatus');
       st.classList.add('show');
       setTimeout(() => st.classList.remove('show'), 2500);
-      btn.disabled = false;
-      btn.querySelector('span').textContent = '저장';
-      isSaving = false;
-      return;
+    } else {
+      showToast('저장 실패. 다시 시도해주세요.', 'error');
     }
-    const payload = encodeURIComponent(JSON.stringify(chunks[idx]));
-    jsonp(APPS_URL + '?action=save&payload=' + payload + '&t=' + Date.now(), function(err, res) {
-      if (err || !res || res.status !== 'ok') {
-        showToast('저장 실패. 다시 시도해주세요.', 'error');
-        btn.disabled = false;
-        btn.querySelector('span').textContent = '저장';
-        isSaving = false;
-        return;
-      }
-      sendNext(idx + 1);
-    });
-  }
-
-  sendNext(0);
+    btn.disabled = false;
+    btn.querySelector('span').textContent = '저장';
+    isSaving = false;
+  });
 }
 
 loadData();
