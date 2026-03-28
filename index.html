@@ -528,10 +528,16 @@ function changeWeek(dir) {
   currentBaseWed = new Date(currentBaseWed);
   currentBaseWed.setDate(currentBaseWed.getDate() + dir*7);
   renderAll();
+  saveWeek();
+}
+function saveWeek() {
+  const week = getWeekKey(currentBaseWed);
+  jsonp(APPS_URL + '?action=saveWeek&week=' + week + '&t=' + Date.now(), function() {});
 }
 function goToday() {
   currentBaseWed = getThisWednesday();
   renderAll();
+  saveWeek();
   closePicker();
 }
 // ── 달력 팝업 ──
@@ -588,6 +594,7 @@ function pickDate(y, m, d) {
   currentBaseWed.setDate(date.getDate() - diffToWed);
   currentBaseWed.setHours(0,0,0,0);
   renderAll();
+  saveWeek();
   renderPicker(); // 선택된 주 하이라이트 갱신
 }
 // 팝업 외부 클릭 시 닫기
