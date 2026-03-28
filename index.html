@@ -27,10 +27,35 @@
   .header-title { font-size: 14px; font-weight: 600; letter-spacing: -0.02em; }
   .header-title span { color: var(--accent); }
   .header-spacer { flex: 1; }
-  .week-nav { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; }
+  .week-nav { display: flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; position: relative; }
   .week-nav button { background: none; border: none; cursor: pointer; width: 28px; height: 28px; border-radius: 6px; color: var(--text2); font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
   .week-nav button:hover { background: var(--border); color: var(--text); }
-  .week-label { font-size: 12px; font-weight: 500; padding: 0 6px; white-space: nowrap; min-width: 140px; text-align: center; }
+  .week-label { font-size: 12px; font-weight: 500; padding: 0 4px; white-space: nowrap; text-align: center; cursor: pointer; border-radius: 4px; transition: background 0.15s; }
+  .week-label:hover { background: var(--border); }
+  .btn-today { background: #deedf9; border: none; border-radius: var(--radius); cursor: pointer; font-size: 12px; font-weight: 600; color: #0c447c; padding: 7px 14px; font-family: inherit; transition: background 0.15s, transform 0.1s; white-space: nowrap; display: flex; align-items: center; gap: 5px; margin-left: 8px; }
+  .btn-today:hover { background: #b5d4f4; }
+  .btn-today:active { transform: scale(0.97); }
+  .week-picker-popup {
+    display: none; position: absolute; top: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%); z-index: 200;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    padding: 12px; min-width: 240px;
+  }
+  .week-picker-popup.open { display: block; }
+  .wp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .wp-month-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .wp-nav { background: none; border: none; cursor: pointer; width: 24px; height: 24px; border-radius: 4px; color: var(--text2); font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .wp-nav:hover { background: var(--border); }
+  .wp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .wp-day-label { text-align: center; font-size: 10px; color: var(--text3); padding: 2px 0; }
+  .wp-day-label.weekend { color: var(--day-weekend); }
+  .wp-cell { text-align: center; padding: 5px 2px; font-size: 11px; border-radius: 4px; cursor: pointer; color: var(--text); }
+  .wp-cell:hover { background: var(--surface2); }
+  .wp-cell.in-week { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+  .wp-cell.today { font-weight: 700; text-decoration: underline; }
+  .wp-cell.other-month { color: var(--text3); }
+  .wp-cell.empty { cursor: default; }
   .btn-save { background: var(--accent); color: #fff; border: none; border-radius: var(--radius); padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; transition: background 0.15s, transform 0.1s; }
   .btn-save:hover { background: #1e47c8; }
   .btn-save:active { transform: scale(0.97); }
@@ -176,12 +201,25 @@
 
 <div class="header">
   <div class="header-title">틀뢴공대 <span>공격대 스케줄</span></div>
-  <div class="header-spacer"></div>
-  <div class="week-nav">
+  <div style="width:20px"></div>
+  <div class="week-nav" id="weekNav">
     <button onclick="changeWeek(-1)">&#8249;</button>
-    <div class="week-label" id="weekLabel">—</div>
+    <div class="week-label" id="weekLabel" onclick="togglePicker()">—</div>
     <button onclick="changeWeek(1)">&#8250;</button>
+    <div class="week-picker-popup" id="weekPickerPopup">
+      <div class="wp-header">
+        <button class="wp-nav" onclick="pickerChangeMonth(-1)">&#8249;</button>
+        <span class="wp-month-label" id="wpMonthLabel"></span>
+        <button class="wp-nav" onclick="pickerChangeMonth(1)">&#8250;</button>
+      </div>
+      <div class="wp-grid" id="wpGrid"></div>
+    </div>
   </div>
+  <button class="btn-today" onclick="goToday()">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>
+    이번 주로
+  </button>
+  <div class="header-spacer"></div>
   <button class="btn-save" id="saveBtn" onclick="saveData()">
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M13 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V5l-3-3z"/>
@@ -259,7 +297,7 @@ function getDates() {
     return d;
   });
 }
-function fmt(d) { return `${d.getMonth()+1}/${d.getDate()}`; }
+function fmt(d) { const mm=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); return `${mm}/${dd}`; }
 function colKey(d, a) { return `d${d}_a${a}`; }
 
 function getHiddenCols() {
@@ -491,6 +529,79 @@ function changeWeek(dir) {
   currentBaseWed.setDate(currentBaseWed.getDate() + dir*7);
   renderAll();
 }
+function goToday() {
+  currentBaseWed = getThisWednesday();
+  renderAll();
+  closePicker();
+}
+// ── 달력 팝업 ──
+let pickerDate = new Date(); // 팝업에서 보여주는 월
+function togglePicker() {
+  const popup = document.getElementById('weekPickerPopup');
+  if (popup.classList.contains('open')) {
+    closePicker();
+  } else {
+    pickerDate = new Date(currentBaseWed);
+    renderPicker();
+    popup.classList.add('open');
+  }
+}
+function closePicker() {
+  document.getElementById('weekPickerPopup').classList.remove('open');
+}
+function pickerChangeMonth(dir) {
+  pickerDate.setMonth(pickerDate.getMonth() + dir);
+  renderPicker();
+}
+function renderPicker() {
+  const y = pickerDate.getFullYear(), m = pickerDate.getMonth();
+  document.getElementById('wpMonthLabel').textContent = y + '년 ' + (m+1) + '월';
+  const grid = document.getElementById('wpGrid');
+  const DAY_LABELS = ['일','월','화','수','목','금','토'];
+  let h = '';
+  DAY_LABELS.forEach((d,i) => {
+    h += `<div class="wp-day-label${i===0||i===6?' weekend':''}">${d}</div>`;
+  });
+  const firstDay = new Date(y, m, 1).getDay();
+  const lastDate = new Date(y, m+1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i=0; i<firstDay; i++) h += '<div class="wp-cell empty"></div>';
+  for (let d=1; d<=lastDate; d++) {
+    const date = new Date(y, m, d);
+    const isToday = date.getTime() === today.getTime();
+    // 이 날짜가 속한 수요일 찾기
+    const dow = date.getDay();
+    const diffToWed = (dow >= 3) ? dow - 3 : dow + 4;
+    const wed = new Date(date); wed.setDate(date.getDate() - diffToWed); wed.setHours(0,0,0,0);
+    const isInWeek = wed.getTime() === currentBaseWed.getTime();
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const cls = ['wp-cell', isInWeek?'in-week':'', isToday?'today':'', isWeekend?'weekend':''].filter(Boolean).join(' ');
+    h += `<div class="${cls}" onclick="pickDate(${y},${m},${d})">${d}</div>`;
+  }
+  grid.innerHTML = h;
+}
+function pickDate(y, m, d) {
+  const date = new Date(y, m, d);
+  const dow = date.getDay();
+  const diffToWed = (dow >= 3) ? dow - 3 : dow + 4;
+  currentBaseWed = new Date(date);
+  currentBaseWed.setDate(date.getDate() - diffToWed);
+  currentBaseWed.setHours(0,0,0,0);
+  renderAll();
+  renderPicker(); // 선택된 주 하이라이트 갱신
+}
+// 팝업 외부 클릭 시 닫기
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('weekNav');
+  if (nav && !nav.contains(e.target)) closePicker();
+});
+// 키보드 단축키: T = 이번 주로, ← = 이전 주, → = 다음 주
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.key === 'ArrowLeft') changeWeek(-1);
+  if (e.key === 'ArrowRight') changeWeek(1);
+});
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function showToast(msg, type='') {
@@ -528,6 +639,7 @@ function loadData() {
         });
       }
       if (parsed.hiddenMembers) hiddenMembers = new Set(parsed.hiddenMembers);
+      if (parsed.lastViewedWeek) { const d = new Date(parsed.lastViewedWeek); if (!isNaN(d)) currentBaseWed = d; }
     } else {
       showToast('데이터 로드 실패. 오프라인 모드로 시작합니다.', 'error');
     }
@@ -550,7 +662,7 @@ async function saveData() {
       hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
     });
     const payload = JSON.stringify({
-      members, data: allData, summaryData, memoData,
+      members, data: allData, summaryData, memoData, lastViewedWeek: getWeekKey(currentBaseWed),
       hiddenColsByWeek: hiddenSerial,
       hiddenMembers: Array.from(hiddenMembers)
     });
