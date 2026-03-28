@@ -373,16 +373,16 @@ function renderSchedTable() {
   h += '</colgroup>';
 
   // Row 1: 요일 헤더
-  h += '<tr class="tr-day-head"><th class="col-name" style="background:#ccc9bc"></th>';
+  h += '<tr class="tr-day-head"><th class="col-name" style="background:#ccc9bc;text-align:center;font-size:10px;font-weight:600;color:#444441">구분</th>';
   for (let d=0; d<7; d++) {
     const span = 2;
     h += `<th class="th-day ${DAY_CLS[d]}" colspan="${span}">${DAYS[d]}<br><span class="d-sub">${fmt(getDates()[d])}</span></th>`;
   }
-  h += '<th style="background:#ccc9bc;border-color:#ccc9bc"></th>'; // 더미
+  h += '<th style="background:var(--surface2);border-left:1px solid var(--border)"></th>'; // 더미
   h += '</tr>';
 
   // Row 2: 오전/오후 토글 헤더
-  h += '<tr class="tr-ampm-head"><th class="col-name" style="padding:4px 6px;font-size:10px;color:#444441;font-weight:600;vertical-align:middle;white-space:nowrap;background:#d3d1c7">구분</th>';
+  h += '<tr class="tr-ampm-head"><th class="col-name" style="padding:4px 6px;font-size:10px;color:#444441;font-weight:600;vertical-align:middle;white-space:nowrap;background:#d3d1c7">성함</th>';
   for (let d=0; d<7; d++) {
     for (let a=0; a<2; a++) {
       const hidden = isHidden(d, a);
@@ -397,7 +397,7 @@ function renderSchedTable() {
       }
     }
   }
-  h += '<th style="background:#d3d1c7;border-color:#d3d1c7"></th>'; // 더미
+  h += '<th style="background:var(--surface2);border-left:1px solid var(--border)"></th>'; // 더미
   h += '</tr>';
 
   // 멤버 행
@@ -430,7 +430,7 @@ function renderSchedTable() {
           }
         }
       }
-      h += `<td style="background:var(--surface2)"></td>`; // 더미
+      h += `<td style="background:var(--surface2);border-left:none;width:100%"></td>`; // 더미
       h += `</tr>`;
     }
   }
