@@ -669,35 +669,14 @@ function saveData() {
     hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
   });
 
-  // 청크 1: 멤버/설정 정보
-  const chunk1 = {
-    members,
-    lastViewedWeek: getWeekKey(currentBaseWed),
-    hiddenColsByWeek: hiddenSerial,
-    hiddenMembers: Array.from(hiddenMembers)
-  };
+  const chunks = [
+    { members, lastViewedWeek: getWeekKey(currentBaseWed), hiddenColsByWeek: hiddenSerial, hiddenMembers: Array.from(hiddenMembers) },
+    { data: allData },
+    { summaryData, memoData }
+  ];
 
-  // 청크 2: 스케줄 데이터
-  const chunk2 = { data: allData };
-
-  // 청크 3: 종합일정 + 메모
-  const chunk3 = { summaryData, memoData };
-
-  let done = 0;
-  let failed = false;
-
-  function onChunkDone(err) {
-    if (failed) return;
-    if (err) {
-      failed = true;
-      showToast('저장 실패. 다시 시도해주세요.', 'error');
-      btn.disabled = false;
-      btn.querySelector('span').textContent = '저장';
-      isSaving = false;
-      return;
-    }
-    done++;
-    if (done === 3) {
+  function sendNext(idx) {
+    if (idx >= chunks.length) {
       showToast('저장 완료! ✓', 'success');
       const st = document.getElementById('saveStatus');
       st.classList.add('show');
@@ -705,19 +684,22 @@ function saveData() {
       btn.disabled = false;
       btn.querySelector('span').textContent = '저장';
       isSaving = false;
+      return;
     }
-  }
-
-  function sendChunk(chunk, cb) {
-    const payload = encodeURIComponent(JSON.stringify(chunk));
+    const payload = encodeURIComponent(JSON.stringify(chunks[idx]));
     jsonp(APPS_URL + '?action=save&payload=' + payload + '&t=' + Date.now(), function(err, res) {
-      cb(err || (res && res.status !== 'ok') ? new Error('fail') : null);
+      if (err || !res || res.status !== 'ok') {
+        showToast('저장 실패. 다시 시도해주세요.', 'error');
+        btn.disabled = false;
+        btn.querySelector('span').textContent = '저장';
+        isSaving = false;
+        return;
+      }
+      sendNext(idx + 1);
     });
   }
 
-  sendChunk(chunk1, onChunkDone);
-  sendChunk(chunk2, onChunkDone);
-  sendChunk(chunk3, onChunkDone);
+  sendNext(0);
 }
 
 loadData();
