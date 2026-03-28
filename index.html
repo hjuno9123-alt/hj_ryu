@@ -42,11 +42,16 @@
   .card-head-title { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; text-transform: uppercase; }
   .card-head-badge { background: var(--accent-light); color: var(--accent); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
 
-  /* ══ 상단 종합 일정 ══ */
+  /* ══ 상단 종합 일정 ══
+     높이 1.5배: 기존 input padding 6px → textarea 방식으로 변경
+     Alt+Enter = 줄바꿈, Enter = 일반 */
   .summary-wrap { overflow-x: auto; }
   table.summary { border-collapse: collapse; width: 100%; min-width: 600px; }
   table.summary th, table.summary td { border: 1px solid var(--border); padding: 0; }
-  .sum-row-label { background: var(--surface2); font-size: 11px; font-weight: 600; color: var(--text2); padding: 0 10px; width: 56px; min-width: 56px; text-align: center; vertical-align: middle; }
+  .sum-row-label {
+    background: var(--surface2); font-size: 11px; font-weight: 600; color: var(--text2);
+    padding: 0 10px; width: 56px; min-width: 56px; text-align: center; vertical-align: middle;
+  }
   .sum-date-th { background: var(--surface2); text-align: center; padding: 5px 6px; min-width: 110px; }
   .sum-date-num { font-size: 11px; font-weight: 600; display: block; }
   .sum-date-day { font-size: 12px; font-weight: 600; display: block; margin-top: 1px; }
@@ -54,66 +59,84 @@
   .sum-date-th.weekend .sum-date-day { color: var(--day-weekend); }
   .sum-date-th.weekday .sum-date-num,
   .sum-date-th.weekday .sum-date-day { color: var(--day-normal); }
-  .sum-input-td { padding: 2px; vertical-align: middle; }
-  .sum-input-td input { width: 100%; border: none; background: transparent; font-size: 12px; color: var(--text); padding: 6px 8px; font-family: inherit; outline: none; text-align: center; min-width: 110px; }
-  .sum-input-td input:focus { background: var(--accent-light); border-radius: 4px; }
-  .sum-input-td input::placeholder { color: var(--text3); font-size: 11px; }
-  .sum-input-td.has-val { background: var(--green-bg); }
-  .sum-input-td.has-val input { color: var(--green); font-weight: 500; }
 
-  /* ══ 하단 멤버 스케줄 ══ */
+  /* textarea 방식으로 1.5배 높이 + 줄바꿈 지원 */
+  .sum-input-td { padding: 2px; vertical-align: top; }
+  .sum-input-td textarea {
+    width: 100%; border: none; background: transparent;
+    font-size: 12px; color: var(--text);
+    padding: 8px; font-family: inherit; outline: none;
+    text-align: center; min-width: 110px;
+    resize: none; overflow: hidden;
+    min-height: 48px; /* 기존 ~32px의 1.5배 */
+    line-height: 1.5; display: block;
+  }
+  .sum-input-td textarea:focus { background: var(--accent-light); border-radius: 4px; }
+  .sum-input-td textarea::placeholder { color: var(--text3); font-size: 11px; }
+  .sum-input-td.has-val { background: var(--green-bg); }
+  .sum-input-td.has-val textarea { color: var(--green); font-weight: 500; }
+  /* 힌트 텍스트 */
+  .sum-hint { font-size: 9px; color: var(--text3); text-align: right; padding: 0 4px 2px; }
+
+  /* ══ 멤버 스케줄 ══ */
   .table-wrap { overflow-x: auto; }
   table.sched { border-collapse: collapse; width: 100%; }
   table.sched th, table.sched td { border: 1px solid var(--border); padding: 0; }
 
-  /* 이름 열 고정 */
-  .col-name { width: 90px; min-width: 80px; position: sticky; left: 0; z-index: 10; background: var(--surface2); }
+  /* 이름 열: 기존 90px → 45px (1/2) */
+  .col-name { width: 45px; min-width: 40px; position: sticky; left: 0; z-index: 10; background: var(--surface2); }
 
-  /* 요일 헤더 */
   .tr-day-head th { background: var(--surface2); }
-  .th-day { text-align: center; padding: 6px 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .th-day { text-align: center; padding: 6px 2px; font-size: 11px; font-weight: 600; white-space: nowrap; }
   .th-day.weekend { color: var(--day-weekend); }
   .th-day.weekday { color: var(--day-normal); }
   .th-day .d-sub { font-weight: 400; font-size: 10px; }
 
-  /* 오전/오후 토글 헤더 */
   .tr-ampm-head th { background: var(--surface2); }
   .th-ampm-toggle { text-align: center; padding: 0; font-size: 10px; font-weight: 600; color: var(--text2); cursor: pointer; user-select: none; }
   .th-ampm-toggle:hover { background: rgba(0,0,0,0.05); }
   .th-ampm-toggle.collapsed { color: var(--accent); background: var(--accent-light); }
-  .th-ampm-inner { padding: 5px 6px; display: flex; align-items: center; justify-content: center; gap: 3px; min-width: 44px; }
-  .th-ampm-inner.slim { min-width: 20px; padding: 5px 3px; }
+  .th-ampm-inner { padding: 5px 2px; display: flex; align-items: center; justify-content: center; gap: 2px; min-width: 26px; }
+  .th-ampm-inner.slim { min-width: 14px; padding: 5px 2px; }
   .toggle-icon { font-size: 9px; }
 
-  /* 멤버 숨김 토글 버튼 (이름 셀 왼쪽) */
+  /* 이름 셀 */
   .td-name { padding: 0; background: var(--surface2) !important; }
   .td-name-inner { display: flex; align-items: center; }
   .member-hide-btn {
-    flex-shrink: 0; width: 18px; height: 100%; min-height: 36px;
+    flex-shrink: 0; width: 14px; min-height: 32px;
     background: none; border: none; border-right: 1px solid var(--border);
-    cursor: pointer; font-size: 9px; color: var(--text3);
+    cursor: pointer; font-size: 8px; color: var(--text3);
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.12s, color 0.12s;
-    padding: 0;
+    transition: background 0.12s, color 0.12s; padding: 0;
   }
   .member-hide-btn:hover { background: var(--border); color: var(--text2); }
-  .td-name input { flex: 1; border: none; background: transparent; font-size: 12px; font-weight: 500; color: var(--text); padding: 8px 8px; font-family: inherit; outline: none; min-width: 0; }
+  /* 이름 input: 1/2 너비이므로 텍스트 작게 */
+  .td-name input {
+    flex: 1; border: none; background: transparent;
+    font-size: 10px; font-weight: 500; color: var(--text);
+    padding: 6px 4px; font-family: inherit; outline: none; min-width: 0;
+  }
   .td-name input:focus { background: var(--accent-light); }
 
-  /* 숨겨진 멤버 행 */
-  .member-hidden td { padding: 0 !important; height: 6px; background: var(--bg); }
+  .member-hidden td { padding: 0 !important; height: 5px; background: var(--bg); }
   .member-hidden .td-name { background: var(--bg) !important; }
   .member-hidden .td-name-inner { opacity: 0.4; }
   .member-hidden .member-hide-btn { color: var(--accent); background: var(--accent-light); }
 
-  /* O/X/미정/빈칸 셀 */
-  .td-sched { text-align: center; padding: 7px 2px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace; min-width: 44px; user-select: none; transition: background 0.1s; }
+  /* O/X/미정/빈칸 셀: 너비 1/2 → min-width 22px */
+  .td-sched {
+    text-align: center; padding: 7px 1px; cursor: pointer;
+    font-size: 11px; font-weight: 700; font-family: 'DM Mono', monospace;
+    min-width: 22px; width: 22px;
+    user-select: none; transition: background 0.1s;
+  }
   .td-sched.o   { background: var(--green-bg);  color: var(--green); }
   .td-sched.x   { background: var(--red-bg);    color: var(--red); }
-  .td-sched.mj  { background: var(--yellow-bg); color: var(--yellow); font-size: 10px; }
+  .td-sched.mj  { background: var(--yellow-bg); color: var(--yellow); font-size: 9px; }
   .td-sched.empty { background: var(--surface); color: var(--text3); }
   .td-sched:hover { filter: brightness(0.93); }
-  .td-collapsed { text-align: center; padding: 8px 3px; cursor: pointer; font-size: 9px; color: var(--accent); background: var(--accent-light); width: 20px; min-width: 20px; }
+  .td-collapsed { text-align: center; padding: 7px 1px; cursor: pointer; font-size: 8px; color: var(--accent); background: var(--accent-light); width: 12px; min-width: 12px; }
   .td-collapsed:hover { background: var(--border); }
 
   /* ══ 메모 테이블 ══ */
@@ -125,18 +148,12 @@
   .memo-name-td-inner { display: flex; align-items: center; }
   .memo-name-label { padding: 8px 10px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .memo-td { padding: 2px; vertical-align: top; }
-  .memo-td textarea {
-    width: 100%; border: none; background: transparent;
-    font-size: 12px; color: var(--text); padding: 7px 10px;
-    font-family: inherit; outline: none; resize: none;
-    min-height: 56px; line-height: 1.5;
-  }
+  .memo-td textarea { width: 100%; border: none; background: transparent; font-size: 12px; color: var(--text); padding: 7px 10px; font-family: inherit; outline: none; resize: none; min-height: 56px; line-height: 1.5; }
   .memo-td textarea:focus { background: var(--accent-light); border-radius: 4px; }
   .memo-td textarea::placeholder { color: var(--text3); font-size: 11px; }
   .memo-td.has-val { background: var(--green-bg); }
   .memo-td.has-val textarea { color: var(--green); }
-  /* 숨겨진 멤버 메모 행 */
-  .memo-hidden td { padding: 0 !important; height: 6px; background: var(--bg); }
+  .memo-hidden td { padding: 0 !important; height: 5px; background: var(--bg); }
   .memo-hidden .memo-name-td { background: var(--bg); opacity: 0.4; }
 
   /* Overlay / Toast */
@@ -191,6 +208,7 @@
     <div class="card-head">
       <div class="card-head-title">종합 일정</div>
       <div class="card-head-badge" id="summaryBadge">이번 주</div>
+      <span style="font-size:10px;color:var(--text3);margin-left:4px">Alt+Enter = 줄바꿈</span>
     </div>
     <div class="summary-wrap">
       <table class="summary" id="summaryTable"></table>
@@ -225,15 +243,15 @@
 const APPS_URL = 'https://script.google.com/macros/s/AKfycbz8Ntp7E45uyXDLSFieg28BDl_7H37yj7Purmc6unDA3CsF2wgEReXBu6qyvaNZ-tBn/exec';
 const DAYS    = ['수','목','금','토','일','월','화'];
 const DAY_CLS = ['weekday','weekday','weekday','weekend','weekend','weekday','weekday'];
-const DEFAULT_HIDDEN_AM = new Set([0,1,2,5,6]); // 수목금월화 오전 기본 접힘
+const DEFAULT_HIDDEN_AM = new Set([0,1,2,5,6]);
 const MEMBER_COUNT = 8;
 
 let currentBaseWed = getThisWednesday();
-let hiddenColsByWeek = {};   // 열 접힘: {weekKey: Set<colKey>}
-let hiddenMembers = new Set(); // 숨긴 멤버 인덱스 (전역, 주 무관)
+let hiddenColsByWeek = {};
+let hiddenMembers = new Set();
 let allData = {};
 let summaryData = {};
-let memoData = {};           // {weekKey: [memo0..memo7]}
+let memoData = {};
 let members = Array.from({length: MEMBER_COUNT}, (_,i) => `멤버 ${i+1}`);
 let isSaving = false;
 
@@ -305,32 +323,67 @@ function updateWeekLabel() {
   document.getElementById('summaryBadge').textContent = k === getWeekKey(getThisWednesday()) ? '이번 주' : fmt(dates[0]) + ' 주';
 }
 
-/* ── 상단 종합 일정 ── */
+/* ── 상단 종합 일정 (textarea, Alt+Enter 줄바꿈) ── */
 function renderSummary() {
   const sd = getSumData();
   const dates = getDates();
   const t = document.getElementById('summaryTable');
   let h = '';
+
   h += '<tr><th class="sum-row-label" rowspan="3">일시</th>';
   for (let d=0; d<7; d++) {
     h += `<th class="sum-date-th ${DAY_CLS[d]}">`;
     h += `<span class="sum-date-num">${fmt(dates[d])}</span>`;
     h += `<span class="sum-date-day">${DAYS[d]}</span></th>`;
   }
-  h += '</tr><tr>';
+  h += '</tr>';
+
+  // 오전 행
+  h += '<tr>';
   for (let d=0; d<7; d++) {
     const v = sd[d][0];
     h += `<td class="sum-input-td${v?' has-val':''}" id="sum_${d}_0">`;
-    h += `<input type="text" value="${esc(v)}" placeholder="오전" maxlength="30" oninput="updateSumCell(${d},0,this.value)"></td>`;
+    h += `<textarea placeholder="오전" rows="2" id="sumta_${d}_0"`;
+    h += ` oninput="updateSumCell(${d},0,this.value);autoResize(this)"`;
+    h += ` onkeydown="handleSumKey(event)">${esc(v)}</textarea>`;
+    h += `</td>`;
   }
-  h += '</tr><tr>';
+  h += '</tr>';
+
+  // 오후 행
+  h += '<tr>';
   for (let d=0; d<7; d++) {
     const v = sd[d][1];
     h += `<td class="sum-input-td${v?' has-val':''}" id="sum_${d}_1">`;
-    h += `<input type="text" value="${esc(v)}" placeholder="오후" maxlength="30" oninput="updateSumCell(${d},1,this.value)"></td>`;
+    h += `<textarea placeholder="오후" rows="2" id="sumta_${d}_1"`;
+    h += ` oninput="updateSumCell(${d},1,this.value);autoResize(this)"`;
+    h += ` onkeydown="handleSumKey(event)">${esc(v)}</textarea>`;
+    h += `</td>`;
   }
   h += '</tr>';
+
   t.innerHTML = h;
+}
+
+// Alt+Enter → 줄바꿈, Enter → 그냥 입력 (기본 동작 허용)
+function handleSumKey(e) {
+  if (e.key === 'Enter' && e.altKey) {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.slice(0, start) + '\n' + ta.value.slice(end);
+    ta.selectionStart = ta.selectionEnd = start + 1;
+    ta.dispatchEvent(new Event('input'));
+  } else if (e.key === 'Enter' && !e.altKey) {
+    // 일반 Enter는 막지 않음 — 기본 줄바꿈 허용
+  }
+}
+
+// textarea 높이 자동 조절
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.max(48, ta.scrollHeight) + 'px';
 }
 
 /* ── 중단 멤버 스케줄 ── */
@@ -343,21 +396,21 @@ function renderSchedTable() {
   // Row 1: 요일 헤더
   h += '<tr class="tr-day-head"><th class="col-name"></th>';
   for (let d=0; d<7; d++) {
-    h += `<th class="th-day ${DAY_CLS[d]}" colspan="2">${DAYS[d]} <span class="d-sub">${fmt(dates[d])}</span></th>`;
+    h += `<th class="th-day ${DAY_CLS[d]}" colspan="2">${DAYS[d]}<br><span class="d-sub">${fmt(dates[d])}</span></th>`;
   }
   h += '</tr>';
 
-  // Row 2: 오전/오후 토글 헤더
-  h += '<tr class="tr-ampm-head"><th class="col-name" style="padding:6px 10px;font-size:11px;color:var(--text2);font-weight:500;vertical-align:middle">이름</th>';
+  // Row 2: 오전/오후 토글
+  h += '<tr class="tr-ampm-head"><th class="col-name" style="padding:4px 6px;font-size:10px;color:var(--text2);font-weight:500;vertical-align:middle">이름</th>';
   for (let d=0; d<7; d++) {
     for (let a=0; a<2; a++) {
       const hidden = isHidden(d, a);
       const key = colKey(d, a);
-      const label = a === 0 ? '오전' : '오후';
+      const label = a === 0 ? '전' : '후'; // 좁아서 줄임
       if (!hidden) {
-        h += `<th class="th-ampm-toggle" onclick="toggleCol('${key}')"><div class="th-ampm-inner">${label} <span class="toggle-icon">▼</span></div></th>`;
+        h += `<th class="th-ampm-toggle" onclick="toggleCol('${key}')"><div class="th-ampm-inner">${label}<span class="toggle-icon">▼</span></div></th>`;
       } else {
-        h += `<th class="th-ampm-toggle collapsed" onclick="toggleCol('${key}')" style="width:22px;min-width:22px"><div class="th-ampm-inner slim"><span class="toggle-icon">▶</span></div></th>`;
+        h += `<th class="th-ampm-toggle collapsed" onclick="toggleCol('${key}')" style="width:14px;min-width:14px"><div class="th-ampm-inner slim"><span class="toggle-icon">▶</span></div></th>`;
       }
     }
   }
@@ -367,21 +420,16 @@ function renderSchedTable() {
   for (let m=0; m<MEMBER_COUNT; m++) {
     const isHiddenMember = hiddenMembers.has(m);
     if (isHiddenMember) {
-      // 숨겨진 멤버: 이름만 좁게 표시, 버튼으로 펼치기
       h += `<tr class="member-hidden">`;
-      h += `<td class="td-name col-name">`;
-      h += `<div class="td-name-inner">`;
+      h += `<td class="td-name col-name"><div class="td-name-inner">`;
       h += `<button class="member-hide-btn" onclick="toggleMember(${m})" title="펼치기">▶</button>`;
       h += `<input value="${esc(members[m])}" onchange="updateMember(${m},this.value)" placeholder="멤버 ${m+1}">`;
       h += `</div></td>`;
-      // 나머지 셀은 빈 td 하나로
-      const totalCols = 7 * 2; // 최대 14열
-      h += `<td colspan="${totalCols}" style="background:var(--bg);border-color:var(--bg)"></td>`;
+      h += `<td colspan="14" style="background:var(--bg);border-color:var(--bg)"></td>`;
       h += `</tr>`;
     } else {
       h += `<tr>`;
-      h += `<td class="td-name col-name">`;
-      h += `<div class="td-name-inner">`;
+      h += `<td class="td-name col-name"><div class="td-name-inner">`;
       h += `<button class="member-hide-btn" onclick="toggleMember(${m})" title="접기">▼</button>`;
       h += `<input value="${esc(members[m])}" onchange="updateMember(${m},this.value)" placeholder="멤버 ${m+1}">`;
       h += `</div></td>`;
@@ -409,14 +457,7 @@ function renderMemoTable() {
   const md = getMemoData();
   const t = document.getElementById('memoTable');
   let h = '';
-
-  // 헤더
-  h += '<tr>';
-  h += '<th class="memo-name-th">이름</th>';
-  h += '<th class="memo-head-th">메모</th>';
-  h += '</tr>';
-
-  // 멤버 행
+  h += '<tr><th class="memo-name-th">이름</th><th class="memo-head-th">메모</th></tr>';
   for (let m=0; m<MEMBER_COUNT; m++) {
     const isHiddenMember = hiddenMembers.has(m);
     if (isHiddenMember) {
@@ -430,14 +471,13 @@ function renderMemoTable() {
       h += `<td class="memo-name-td"><div class="memo-name-td-inner"><span class="memo-name-label">${esc(members[m])}</span></div></td>`;
       h += `<td class="memo-td${v?' has-val':''}" id="memo_${m}">`;
       h += `<textarea placeholder="메모를 입력하세요..." oninput="updateMemo(${m},this.value)">${esc(v)}</textarea>`;
-      h += `</td>`;
-      h += `</tr>`;
+      h += `</td></tr>`;
     }
   }
   t.innerHTML = h;
 }
 
-/* ── 이벤트 핸들러 ── */
+/* ── 핸들러 ── */
 function updateSumCell(d, a, val) {
   getSumData()[d][a] = val;
   const td = document.getElementById(`sum_${d}_${a}`);
@@ -507,13 +547,15 @@ function loadData() {
           hiddenColsByWeek[k] = new Set(parsed.hiddenColsByWeek[k]);
         });
       }
-      if (parsed.hiddenMembers) {
-        hiddenMembers = new Set(parsed.hiddenMembers);
-      }
+      if (parsed.hiddenMembers) hiddenMembers = new Set(parsed.hiddenMembers);
     } else {
       showToast('데이터 로드 실패. 오프라인 모드로 시작합니다.', 'error');
     }
     renderAll();
+    // textarea 높이 초기화
+    setTimeout(() => {
+      document.querySelectorAll('table.summary textarea').forEach(ta => autoResize(ta));
+    }, 50);
   });
 }
 
@@ -529,17 +571,12 @@ async function saveData() {
       hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
     });
     const payload = JSON.stringify({
-      members,
-      data: allData,
-      summaryData,
-      memoData,
+      members, data: allData, summaryData, memoData,
       hiddenColsByWeek: hiddenSerial,
       hiddenMembers: Array.from(hiddenMembers)
     });
     await fetch(APPS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: payload,
+      method: 'POST', mode: 'no-cors', body: payload,
       headers: { 'Content-Type': 'text/plain' }
     });
     showToast('저장 완료! ✓', 'success');
