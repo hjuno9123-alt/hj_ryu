@@ -668,41 +668,56 @@ function saveData() {
   Object.keys(hiddenColsByWeek).forEach(k => {
     hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
   });
-  const payload = JSON.stringify({
-    members, data: allData, summaryData, memoData,
+
+  // 청크 1: 멤버/설정 정보
+  const chunk1 = {
+    members,
     lastViewedWeek: getWeekKey(currentBaseWed),
     hiddenColsByWeek: hiddenSerial,
     hiddenMembers: Array.from(hiddenMembers)
-  });
+  };
 
-  fetch(APPS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: payload,
-    headers: { 'Content-Type': 'text/plain' }
-  }).then(function() {
-    // POST no-cors는 응답 확인 불가 — 저장 후 JSONP로 검증
-    setTimeout(function() {
-      jsonp(APPS_URL + '?action=verify&t=' + Date.now(), function(err, res) {
-        if (!err && res) {
-          showToast('저장 완료! ✓', 'success');
-          const st = document.getElementById('saveStatus');
-          st.classList.add('show');
-          setTimeout(() => st.classList.remove('show'), 2500);
-        } else {
-          showToast('저장 실패. 다시 시도해주세요.', 'error');
-        }
-        btn.disabled = false;
-        btn.querySelector('span').textContent = '저장';
-        isSaving = false;
-      });
-    }, 1500);
-  }).catch(function() {
-    showToast('저장 실패. 네트워크를 확인해주세요.', 'error');
-    btn.disabled = false;
-    btn.querySelector('span').textContent = '저장';
-    isSaving = false;
-  });
+  // 청크 2: 스케줄 데이터
+  const chunk2 = { data: allData };
+
+  // 청크 3: 종합일정 + 메모
+  const chunk3 = { summaryData, memoData };
+
+  let done = 0;
+  let failed = false;
+
+  function onChunkDone(err) {
+    if (failed) return;
+    if (err) {
+      failed = true;
+      showToast('저장 실패. 다시 시도해주세요.', 'error');
+      btn.disabled = false;
+      btn.querySelector('span').textContent = '저장';
+      isSaving = false;
+      return;
+    }
+    done++;
+    if (done === 3) {
+      showToast('저장 완료! ✓', 'success');
+      const st = document.getElementById('saveStatus');
+      st.classList.add('show');
+      setTimeout(() => st.classList.remove('show'), 2500);
+      btn.disabled = false;
+      btn.querySelector('span').textContent = '저장';
+      isSaving = false;
+    }
+  }
+
+  function sendChunk(chunk, cb) {
+    const payload = encodeURIComponent(JSON.stringify(chunk));
+    jsonp(APPS_URL + '?action=save&payload=' + payload + '&t=' + Date.now(), function(err, res) {
+      cb(err || (res && res.status !== 'ok') ? new Error('fail') : null);
+    });
+  }
+
+  sendChunk(chunk1, onChunkDone);
+  sendChunk(chunk2, onChunkDone);
+  sendChunk(chunk3, onChunkDone);
 }
 
 loadData();
