@@ -361,13 +361,24 @@ function renderSchedTable() {
   const t = document.getElementById('schedTable');
   let h = '';
 
+  // colgroup: 각 열 너비 고정, 마지막 더미 열이 나머지 공간 흡수
+  h += '<colgroup>';
+  h += '<col style="width:70px">';
+  for (let d=0; d<7; d++) {
+    for (let a=0; a<2; a++) {
+      h += isHidden(d,a) ? '<col style="width:16px">' : '<col style="width:46px">';
+    }
+  }
+  h += '<col>'; // 더미 열 — 나머지 너비 흡수
+  h += '</colgroup>';
+
   // Row 1: 요일 헤더
   h += '<tr class="tr-day-head"><th class="col-name" style="background:#ccc9bc"></th>';
   for (let d=0; d<7; d++) {
-    const amH = isHidden(d, 0), pmH = isHidden(d, 1);
-    const span = (amH ? 1 : 1) + (pmH ? 1 : 1); // 접혀도 1열 차지
-    h += `<th class="th-day ${DAY_CLS[d]}" colspan="${span}">${DAYS[d]}<br><span class="d-sub">${fmt(dates[d])}</span></th>`;
+    const span = 2;
+    h += `<th class="th-day ${DAY_CLS[d]}" colspan="${span}">${DAYS[d]}<br><span class="d-sub">${fmt(getDates()[d])}</span></th>`;
   }
+  h += '<th style="background:#ccc9bc;border-color:#ccc9bc"></th>'; // 더미
   h += '</tr>';
 
   // Row 2: 오전/오후 토글 헤더
@@ -381,12 +392,12 @@ function renderSchedTable() {
         h += `<th class="th-ampm-toggle" onclick="toggleCol('${key}')">`;
         h += `<div class="th-ampm-inner">${label} <span class="toggle-icon">▼</span></div></th>`;
       } else {
-        // 접힌 헤더: 진한 회색 배경 + 흰 삼각형
         h += `<th class="th-ampm-collapsed" onclick="toggleCol('${key}')">`;
         h += `<div class="th-ampm-collapsed-inner">▶</div></th>`;
       }
     }
   }
+  h += '<th style="background:#d3d1c7;border-color:#d3d1c7"></th>'; // 더미
   h += '</tr>';
 
   // 멤버 행
@@ -398,7 +409,7 @@ function renderSchedTable() {
       h += `<button class="member-hide-btn" onclick="toggleMember(${m})">▶</button>`;
       h += `<input value="${esc(members[m])}" onchange="updateMember(${m},this.value)" placeholder="멤버 ${m+1}">`;
       h += `</div></td>`;
-      h += `<td colspan="14" style="background:var(--surface2);border-color:var(--border)"></td>`;
+      h += `<td colspan="15" style="background:var(--surface2);border-color:var(--border)"></td>`;
       h += `</tr>`;
     } else {
       h += `<tr>`;
@@ -415,11 +426,11 @@ function renderSchedTable() {
             const cls = stateClass(v);
             h += `<td class="td-sched ${cls}" onclick="toggleCell(${m},${d},${a})">${v||'·'}</td>`;
           } else {
-            // 접힌 데이터 셀: blank 회색, 클릭하면 펼쳐짐
             h += `<td class="td-col-collapsed" onclick="toggleCol('${key}')"></td>`;
           }
         }
       }
+      h += `<td style="background:var(--surface2)"></td>`; // 더미
       h += `</tr>`;
     }
   }
