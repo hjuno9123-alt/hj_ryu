@@ -639,7 +639,7 @@ function loadData() {
         });
       }
       if (parsed.hiddenMembers) hiddenMembers = new Set(parsed.hiddenMembers);
-      if (parsed.lastViewedWeek) { const d = new Date(parsed.lastViewedWeek); if (!isNaN(d)) currentBaseWed = d; }
+      if (parsed.lastViewedWeek) { const p = parsed.lastViewedWeek.split('-'); if (p.length===3) { currentBaseWed = new Date(+p[0], +p[1]-1, +p[2]); currentBaseWed.setHours(0,0,0,0); } }
     } else {
       showToast('데이터 로드 실패. 오프라인 모드로 시작합니다.', 'error');
     }
