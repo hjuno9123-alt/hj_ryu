@@ -663,30 +663,31 @@ async function saveData() {
   const btn = document.getElementById('saveBtn');
   btn.disabled = true;
   btn.querySelector('span').textContent = '저장 중...';
-  try {
-    const hiddenSerial = {};
-    Object.keys(hiddenColsByWeek).forEach(k => {
-      hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
-    });
-    const payload = JSON.stringify({
-      members, data: allData, summaryData, memoData, lastViewedWeek: getWeekKey(currentBaseWed),
-      hiddenColsByWeek: hiddenSerial,
-      hiddenMembers: Array.from(hiddenMembers)
-    });
-    await fetch(APPS_URL, {
-      method: 'POST', mode: 'no-cors', body: payload,
-      headers: { 'Content-Type': 'text/plain' }
-    });
-    showToast('저장 완료! ✓', 'success');
-    const st = document.getElementById('saveStatus');
-    st.classList.add('show');
-    setTimeout(() => st.classList.remove('show'), 2500);
-  } catch(e) {
-    showToast('저장 실패. 네트워크를 확인해주세요.', 'error');
-  }
-  btn.disabled = false;
-  btn.querySelector('span').textContent = '저장';
-  isSaving = false;
+
+  const hiddenSerial = {};
+  Object.keys(hiddenColsByWeek).forEach(k => {
+    hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
+  });
+  const payload = encodeURIComponent(JSON.stringify({
+    members, data: allData, summaryData, memoData,
+    lastViewedWeek: getWeekKey(currentBaseWed),
+    hiddenColsByWeek: hiddenSerial,
+    hiddenMembers: Array.from(hiddenMembers)
+  }));
+
+  jsonp(APPS_URL + '?action=save&payload=' + payload + '&t=' + Date.now(), function(err, res) {
+    if (!err && res && res.status === 'ok') {
+      showToast('저장 완료! ✓', 'success');
+      const st = document.getElementById('saveStatus');
+      st.classList.add('show');
+      setTimeout(() => st.classList.remove('show'), 2500);
+    } else {
+      showToast('저장 실패. 다시 시도해주세요.', 'error');
+    }
+    btn.disabled = false;
+    btn.querySelector('span').textContent = '저장';
+    isSaving = false;
+  });
 }
 
 loadData();
