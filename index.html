@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f4f0; --surface: #ffffff; --surface2: #f0efe9;
+    --bg: #f8f7f4; --surface: #ffffff; --surface2: #f0efe9;
     --border: #e2e0d8; --border2: #ccc9bc;
     --text: #1a1916; --text2: #6b6860; --text3: #a09d94;
     --accent: #2d5be3; --accent-light: #e8edfb;
@@ -40,9 +40,9 @@
 
   .main { padding: 16px; max-width: 1600px; margin: 0 auto; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden; }
-  .card-head { padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; gap: 8px; }
-  .card-head-title { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; text-transform: uppercase; }
-  .card-head-badge { background: var(--accent-light); color: var(--accent); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .card-head { padding: 10px 16px; border-bottom: 1px solid #b5d4f4; background: #deedf9; display: flex; align-items: center; gap: 8px; }
+  .card-head-title { font-size: 11px; font-weight: 600; color: #0c447c; letter-spacing: 0.06em; text-transform: uppercase; }
+  .card-head-badge { background: #e6f1fb; color: #185fa5; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
 
   /* ══ 상단 종합 일정 ══ */
   .summary-wrap { overflow-x: auto; }
@@ -67,25 +67,25 @@
   .table-wrap { overflow-x: auto; background: var(--surface2); }
 
   /* ① width: auto — 내용물 크기에 맞게 수축 */
-  table.sched { border-collapse: collapse; width: auto; }
+  table.sched { border-collapse: collapse; width: 100%; }
   table.sched th, table.sched td { border: 1px solid var(--border); padding: 0; }
 
   /* 이름 열 */
   .col-name { white-space: nowrap; position: sticky; left: 0; z-index: 10; background: var(--surface2); }
 
   /* 요일 헤더 */
-  .tr-day-head th { background: var(--surface2); }
+  .tr-day-head th { background: #ccc9bc; }
   .th-day { text-align: center; padding: 6px 6px; font-size: 11px; font-weight: 600; white-space: nowrap; }
   .th-day.weekend { color: var(--day-weekend); }
   .th-day.weekday { color: var(--day-normal); }
   .th-day .d-sub { font-weight: 400; font-size: 10px; }
 
   /* 오전/오후 토글 헤더 */
-  .tr-ampm-head th { background: var(--surface2); }
+  .tr-ampm-head th { background: #d3d1c7; }
 
   /* 펼쳐진 상태 헤더 */
-  .th-ampm-toggle { text-align: center; padding: 0; font-size: 10px; font-weight: 600; color: var(--text2); cursor: pointer; user-select: none; white-space: nowrap; }
-  .th-ampm-toggle:hover { background: rgba(0,0,0,0.05); }
+  .th-ampm-toggle { text-align: center; padding: 0; font-size: 10px; font-weight: 600; color: #444441; cursor: pointer; user-select: none; white-space: nowrap; }
+  .th-ampm-toggle:hover { background: rgba(0,0,0,0.08); }
   .th-ampm-inner { padding: 5px 8px; display: flex; align-items: center; justify-content: center; gap: 3px; }
   .toggle-icon { font-size: 9px; }
 
@@ -135,17 +135,15 @@
   /* ══ 메모 테이블 ══ */
   table.memo { border-collapse: collapse; width: 100%; }
   table.memo th, table.memo td { border: 1px solid var(--border); padding: 0; }
-  .memo-name-th { background: var(--surface2); font-size: 11px; font-weight: 600; color: var(--text2); padding: 8px 12px; width: 90px; min-width: 80px; position: sticky; left: 0; z-index: 2; text-align: left; }
-  .memo-head-th { background: var(--surface2); font-size: 11px; font-weight: 600; color: var(--text2); padding: 8px 12px; text-align: left; }
+  .memo-name-th { background: #ccc9bc; font-size: 11px; font-weight: 600; color: #444441; padding: 8px 12px; width: 90px; min-width: 80px; position: sticky; left: 0; z-index: 2; text-align: center; }
+  .memo-head-th { background: #ccc9bc; font-size: 11px; font-weight: 600; color: #444441; padding: 8px 12px; text-align: center; }
   .memo-name-td { background: var(--surface2); font-size: 12px; font-weight: 500; color: var(--text); padding: 0; position: sticky; left: 0; z-index: 1; }
   .memo-name-td-inner { display: flex; align-items: center; }
   .memo-name-label { padding: 8px 10px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .memo-td { padding: 2px; vertical-align: top; }
+  .memo-td { padding: 2px; vertical-align: top; background: var(--surface); }
   .memo-td textarea { width: 100%; border: none; background: transparent; font-size: 12px; color: var(--text); padding: 7px 10px; font-family: inherit; outline: none; resize: none; min-height: 56px; line-height: 1.5; }
   .memo-td textarea:focus { background: var(--accent-light); border-radius: 4px; }
   .memo-td textarea::placeholder { color: var(--text3); font-size: 11px; }
-  .memo-td.has-val { background: var(--green-bg); }
-  .memo-td.has-val textarea { color: var(--green); }
   .memo-hidden td { padding: 0 !important; height: 5px; background: var(--bg); }
   .memo-hidden .memo-name-td { background: var(--bg); opacity: 0.4; }
 
@@ -363,8 +361,8 @@ function renderSchedTable() {
   const t = document.getElementById('schedTable');
   let h = '';
 
-  // Row 1: 요일 헤더 — colspan은 보이는 열 수에 따라 동적
-  h += '<tr class="tr-day-head"><th class="col-name"></th>';
+  // Row 1: 요일 헤더
+  h += '<tr class="tr-day-head"><th class="col-name" style="background:#ccc9bc"></th>';
   for (let d=0; d<7; d++) {
     const amH = isHidden(d, 0), pmH = isHidden(d, 1);
     const span = (amH ? 1 : 1) + (pmH ? 1 : 1); // 접혀도 1열 차지
@@ -373,7 +371,7 @@ function renderSchedTable() {
   h += '</tr>';
 
   // Row 2: 오전/오후 토글 헤더
-  h += '<tr class="tr-ampm-head"><th class="col-name" style="padding:4px 6px;font-size:10px;color:var(--text2);font-weight:500;vertical-align:middle;white-space:nowrap">이름</th>';
+  h += '<tr class="tr-ampm-head"><th class="col-name" style="padding:4px 6px;font-size:10px;color:#444441;font-weight:600;vertical-align:middle;white-space:nowrap;background:#d3d1c7">구분</th>';
   for (let d=0; d<7; d++) {
     for (let a=0; a<2; a++) {
       const hidden = isHidden(d, a);
@@ -445,7 +443,7 @@ function renderMemoTable() {
       const v = md[m] || '';
       h += `<tr>`;
       h += `<td class="memo-name-td"><div class="memo-name-td-inner"><span class="memo-name-label">${esc(members[m])}</span></div></td>`;
-      h += `<td class="memo-td${v?' has-val':''}" id="memo_${m}">`;
+      h += `<td class="memo-td" id="memo_${m}">`;
       h += `<textarea placeholder="메모를 입력하세요..." oninput="updateMemo(${m},this.value)">${esc(v)}</textarea>`;
       h += `</td></tr>`;
     }
@@ -476,8 +474,6 @@ function toggleMember(m) {
 function updateMember(idx, val) { members[idx] = val; renderMemoTable(); }
 function updateMemo(m, val) {
   getMemoData()[m] = val;
-  const td = document.getElementById(`memo_${m}`);
-  if (td) td.className = `memo-td${val?' has-val':''}`;
 }
 function changeWeek(dir) {
   currentBaseWed = new Date(currentBaseWed);
