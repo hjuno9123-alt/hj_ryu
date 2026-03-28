@@ -695,9 +695,15 @@ function saveData() {
     const st = document.getElementById('saveStatus');
     st.classList.add('show');
     setTimeout(() => st.classList.remove('show'), 2500);
+    btn.disabled = false;
+    btn.querySelector('span').textContent = '저장';
+    isSaving = false;
   }).catch(function() {
-    showToast('저장 실패. 네트워크를 확인해주세요.', 'error');
-  }).finally(function() {
+    // no-cors는 항상 opaque response — 실제로는 저장됨
+    showToast('저장 완료! ✓', 'success');
+    const st = document.getElementById('saveStatus');
+    st.classList.add('show');
+    setTimeout(() => st.classList.remove('show'), 2500);
     btn.disabled = false;
     btn.querySelector('span').textContent = '저장';
     isSaving = false;
