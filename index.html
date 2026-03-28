@@ -15,8 +15,8 @@
     --red: #c0392b; --red-bg: #fbeaea;
     --yellow: #8a6200; --yellow-bg: #fff3cc;
     --day-normal: #1a1916; --day-weekend: #c0392b;
-    --collapsed-bg: #8a8a8a;   /* 접힌 열 배경: 중간 회색 */
-    --collapsed-fg: #ffffff;   /* 접힌 열 아이콘: 흰색 */
+    --collapsed-bg: #f0efe9;   /* 접힌 열 배경: 연한 회색 */
+    --collapsed-fg: #8a8a8a;   /* 접힌 열 아이콘: 진한 회색 */
     --radius: 8px; --radius-lg: 12px;
     --shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
@@ -64,7 +64,7 @@
   .sum-input-td.has-val textarea { color: var(--green); font-weight: 500; }
 
   /* ══ 멤버 스케줄 ══ */
-  .table-wrap { overflow-x: auto; }
+  .table-wrap { overflow-x: auto; background: var(--surface2); }
 
   /* ① width: auto — 내용물 크기에 맞게 수축 */
   table.sched { border-collapse: collapse; width: auto; }
@@ -95,7 +95,7 @@
     background: var(--collapsed-bg); width: 16px; min-width: 16px;
     border-color: var(--collapsed-bg);
   }
-  .th-ampm-collapsed:hover { background: #6b6b6b; }
+  .th-ampm-collapsed:hover { background: #dddcd6; }
   .th-ampm-collapsed-inner {
     padding: 5px 3px; display: flex; align-items: center; justify-content: center;
     color: var(--collapsed-fg); font-size: 9px;
@@ -130,7 +130,7 @@
     border-color: var(--collapsed-bg);
     padding: 0;
   }
-  .td-col-collapsed:hover { background: #6b6b6b; }
+  .td-col-collapsed:hover { background: #dddcd6; }
 
   /* ══ 메모 테이블 ══ */
   table.memo { border-collapse: collapse; width: 100%; }
@@ -400,7 +400,7 @@ function renderSchedTable() {
       h += `<button class="member-hide-btn" onclick="toggleMember(${m})">▶</button>`;
       h += `<input value="${esc(members[m])}" onchange="updateMember(${m},this.value)" placeholder="멤버 ${m+1}">`;
       h += `</div></td>`;
-      h += `<td colspan="14" style="background:var(--bg);border-color:var(--bg)"></td>`;
+      h += `<td colspan="14" style="background:var(--surface2);border-color:var(--border)"></td>`;
       h += `</tr>`;
     } else {
       h += `<tr>`;
@@ -439,7 +439,7 @@ function renderMemoTable() {
     if (isHiddenMember) {
       h += `<tr class="memo-hidden">`;
       h += `<td class="memo-name-td"><div class="memo-name-td-inner"><span class="memo-name-label">${esc(members[m])}</span></div></td>`;
-      h += `<td style="background:var(--bg);border-color:var(--bg)"></td>`;
+      h += `<td style="background:var(--surface2);border-color:var(--border)"></td>`;
       h += `</tr>`;
     } else {
       const v = md[m] || '';
