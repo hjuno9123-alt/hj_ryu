@@ -183,6 +183,16 @@
   .toast.success { background: var(--green); }
   .toast.error { background: var(--red); }
 
+  /* ── 반응형 스케줄+메모 레이아웃 ── */
+  .sched-memo-wrap { display: flex; gap: 12px; align-items: stretch; }
+  .sched-card { flex: 0 0 70%; min-width: 0; overflow: hidden; }
+  .memo-card { flex: 0 0 calc(30% - 12px); min-width: 0; overflow: hidden; }
+
+  @media (max-width: 768px) {
+    .sched-memo-wrap { flex-direction: column; }
+    .sched-card, .memo-card { flex: none; width: 100%; }
+  }
+
   @media (max-width: 600px) {
     .header { padding: 0 12px; gap: 8px; }
     .week-label { min-width: 110px; font-size: 11px; }
@@ -201,7 +211,7 @@
 
 <div class="header">
   <div class="header-title">틀뢴공대 <span>공격대 스케줄</span></div>
-  <div style="width:20px"></div>
+  <div class="header-spacer"></div>
   <div class="week-nav" id="weekNav">
     <button onclick="changeWeek(-1)">&#8249;</button>
     <div class="week-label" id="weekLabel" onclick="togglePicker()">—</div>
@@ -219,7 +229,7 @@
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>
     이번 주로
   </button>
-  <div class="header-spacer"></div>
+  <div style="width:20px"></div>
   <button class="btn-save" id="saveBtn" onclick="saveData()">
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M13 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V5l-3-3z"/>
@@ -243,8 +253,8 @@
     </div>
   </div>
 
-  <div style="display:flex;gap:12px;align-items:stretch">
-    <div class="card" style="flex:0 0 70%;min-width:0;overflow:hidden">
+  <div class="sched-memo-wrap">
+    <div class="card sched-card">
       <div class="card-head">
         <div class="card-head-title">멤버 스케줄</div>
         <div class="card-head-badge">클릭 → O / X / 미정 / 빈칸</div>
@@ -254,12 +264,12 @@
       </div>
     </div>
 
-    <div class="card" style="flex:0 0 calc(30% - 12px);min-width:0;overflow:hidden">
+    <div class="card memo-card">
       <div class="card-head">
         <div class="card-head-title">멤버 메모</div>
         <div class="card-head-badge">주차별 저장</div>
       </div>
-      <div class="table-wrap" style="height:calc(100% - 41px);overflow-y:auto">
+      <div class="table-wrap">
         <table class="memo" id="memoTable"></table>
       </div>
     </div>
