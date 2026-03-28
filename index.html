@@ -654,7 +654,12 @@ function loadData() {
       if (parsed.lastViewedWeek) {
         const p = parsed.lastViewedWeek.split('-');
         if (p.length === 3) {
-          currentBaseWed = new Date(+p[0], +p[1]-1, +p[2], 0, 0, 0, 0);
+          const d = new Date(+p[0], +p[1]-1, +p[2], 0, 0, 0, 0);
+          // 수요일로 보정
+          const dow = d.getDay();
+          const diff = dow >= 3 ? dow - 3 : dow + 4;
+          d.setDate(d.getDate() - diff);
+          currentBaseWed = d;
         }
       }
     } else {
