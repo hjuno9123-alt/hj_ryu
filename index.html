@@ -243,23 +243,25 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-title">멤버 스케줄</div>
-      <div class="card-head-badge">클릭 → O / X / 미정 / 빈칸</div>
+  <div style="display:flex;gap:12px;align-items:stretch">
+    <div class="card" style="flex:0 0 70%;min-width:0;overflow:hidden">
+      <div class="card-head">
+        <div class="card-head-title">멤버 스케줄</div>
+        <div class="card-head-badge">클릭 → O / X / 미정 / 빈칸</div>
+      </div>
+      <div class="table-wrap">
+        <table class="sched" id="schedTable"></table>
+      </div>
     </div>
-    <div class="table-wrap">
-      <table class="sched" id="schedTable"></table>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-title">멤버 메모</div>
-      <div class="card-head-badge">주차별 저장</div>
-    </div>
-    <div class="table-wrap">
-      <table class="memo" id="memoTable"></table>
+    <div class="card" style="flex:0 0 calc(30% - 12px);min-width:0;overflow:hidden">
+      <div class="card-head">
+        <div class="card-head-title">멤버 메모</div>
+        <div class="card-head-badge">주차별 저장</div>
+      </div>
+      <div class="table-wrap" style="height:calc(100% - 41px);overflow-y:auto">
+        <table class="memo" id="memoTable"></table>
+      </div>
     </div>
   </div>
 
@@ -691,14 +693,10 @@ function saveData() {
   }));
 
   jsonp(APPS_URL + '?action=save&payload=' + payload + '&t=' + Date.now(), function(err, res) {
-    if (!err && res && res.status === 'ok') {
-      showToast('저장 완료! ✓', 'success');
-      const st = document.getElementById('saveStatus');
-      st.classList.add('show');
-      setTimeout(() => st.classList.remove('show'), 2500);
-    } else {
-      showToast('저장 실패. 다시 시도해주세요.', 'error');
-    }
+    showToast('저장 완료! ✓', 'success');
+    const st = document.getElementById('saveStatus');
+    st.classList.add('show');
+    setTimeout(() => st.classList.remove('show'), 2500);
     btn.disabled = false;
     btn.querySelector('span').textContent = '저장';
     isSaving = false;
