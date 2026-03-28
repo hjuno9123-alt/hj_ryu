@@ -13,8 +13,9 @@
     --accent: #2d5be3; --accent-light: #e8edfb;
     --green: #1a7a4a; --green-bg: #e6f5ed;
     --red: #c0392b; --red-bg: #fbeaea;
-    --wed: #2d5be3; --thu: #1a7a4a; --fri: #6b3fa0;
-    --sat: #c0392b; --sun: #c0392b; --mon: #3a3a3a; --tue: #2d5be3;
+    --yellow: #8a6200; --yellow-bg: #fff3cc;
+    --day-normal: #1a1916;
+    --day-weekend: #c0392b;
     --radius: 8px; --radius-lg: 12px;
     --shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
@@ -50,10 +51,11 @@
   .sum-date-th { background: var(--surface2); text-align: center; padding: 5px 6px; min-width: 110px; }
   .sum-date-num { font-size: 11px; font-weight: 600; display: block; }
   .sum-date-day { font-size: 12px; font-weight: 600; display: block; margin-top: 1px; }
-  .sum-date-th.wed .sum-date-day { color: var(--wed); } .sum-date-th.thu .sum-date-day { color: var(--thu); }
-  .sum-date-th.fri .sum-date-day { color: var(--fri); } .sum-date-th.sat .sum-date-day { color: var(--sat); }
-  .sum-date-th.sun .sum-date-day { color: var(--sun); } .sum-date-th.mon .sum-date-day { color: var(--mon); }
-  .sum-date-th.tue .sum-date-day { color: var(--tue); }
+  /* 상단: 토/일 빨강, 나머지 검정 */
+  .sum-date-th.weekend .sum-date-num { color: var(--day-weekend); }
+  .sum-date-th.weekend .sum-date-day { color: var(--day-weekend); }
+  .sum-date-th.weekday .sum-date-num { color: var(--day-normal); }
+  .sum-date-th.weekday .sum-date-day { color: var(--day-normal); }
   .sum-input-td { padding: 2px; vertical-align: middle; }
   .sum-input-td input { width: 100%; border: none; background: transparent; font-size: 12px; color: var(--text); padding: 6px 8px; font-family: inherit; outline: none; text-align: center; min-width: 110px; }
   .sum-input-td input:focus { background: var(--accent-light); border-radius: 4px; }
@@ -69,9 +71,10 @@
 
   .tr-day-head th { background: var(--surface2); }
   .th-day { text-align: center; padding: 6px 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .th-day.wed { color: var(--wed); } .th-day.thu { color: var(--thu); } .th-day.fri { color: var(--fri); }
-  .th-day.sat { color: var(--sat); } .th-day.sun { color: var(--sun); } .th-day.mon { color: var(--mon); } .th-day.tue { color: var(--tue); }
-  .th-day .d-sub { font-weight: 400; font-size: 10px; color: var(--text3); }
+  /* 하단: 토/일 빨강, 나머지 검정 */
+  .th-day.weekend { color: var(--day-weekend); }
+  .th-day.weekday { color: var(--day-normal); }
+  .th-day .d-sub { font-weight: 400; font-size: 10px; }
 
   .tr-ampm-head th { background: var(--surface2); }
   .th-ampm-toggle { text-align: center; padding: 0; font-size: 10px; font-weight: 600; color: var(--text2); cursor: pointer; user-select: none; white-space: nowrap; }
@@ -84,9 +87,12 @@
   .td-name { padding: 0; background: var(--surface2) !important; }
   .td-name input { width: 100%; border: none; background: transparent; font-size: 12px; font-weight: 500; color: var(--text); padding: 8px 10px; font-family: inherit; outline: none; }
   .td-name input:focus { background: var(--accent-light); }
-  .td-sched { text-align: center; padding: 8px 4px; cursor: pointer; font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace; min-width: 52px; user-select: none; transition: background 0.1s; }
-  .td-sched.o { background: var(--green-bg); color: var(--green); }
-  .td-sched.x { background: var(--red-bg); color: var(--red); }
+
+  /* O/X/미정/빈칸 셀 */
+  .td-sched { text-align: center; padding: 7px 2px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace; min-width: 44px; user-select: none; transition: background 0.1s; }
+  .td-sched.o   { background: var(--green-bg);  color: var(--green); }
+  .td-sched.x   { background: var(--red-bg);    color: var(--red); }
+  .td-sched.mj  { background: var(--yellow-bg); color: var(--yellow); font-size: 11px; }
   .td-sched.empty { background: var(--surface); color: var(--text3); }
   .td-sched:hover { filter: brightness(0.93); }
   .td-collapsed { text-align: center; padding: 8px 3px; cursor: pointer; font-size: 9px; color: var(--accent); background: var(--accent-light); width: 20px; min-width: 20px; }
@@ -119,7 +125,7 @@
 <div class="toast" id="toast"></div>
 
 <div class="header">
-  <div class="header-title">팀 <span>스케줄</span></div>
+  <div class="header-title">틀뢴공대 <span>공격대 스케줄</span></div>
   <div class="header-spacer"></div>
   <div class="week-nav">
     <button onclick="changeWeek(-1)">&#8249;</button>
@@ -150,7 +156,7 @@
   <div class="card">
     <div class="card-head">
       <div class="card-head-title">멤버 스케줄</div>
-      <div class="card-head-badge">셀 클릭 → O / X / 빈칸</div>
+      <div class="card-head-badge">클릭 → O / X / 미정 / 빈칸</div>
     </div>
     <div class="table-wrap">
       <table class="sched" id="schedTable"></table>
@@ -161,12 +167,14 @@
 <script>
 const APPS_URL = 'https://script.google.com/macros/s/AKfycbz8Ntp7E45uyXDLSFieg28BDl_7H37yj7Purmc6unDA3CsF2wgEReXBu6qyvaNZ-tBn/exec';
 const DAYS    = ['수','목','금','토','일','월','화'];
-const DAY_CLS = ['wed','thu','fri','sat','sun','mon','tue'];
-const AMPM    = ['오전','오후'];
+const DAY_CLS = ['weekday','weekday','weekday','weekend','weekend','weekday','weekday'];
+// 기본 접힘: 수(0),목(1),금(2),월(5),화(6)의 오전(a=0) → 토(3),일(4)는 기본 펼침
+const DEFAULT_HIDDEN_AM = new Set([0,1,2,5,6]); // dayIdx에서 오전만 기본 접힘
 const MEMBER_COUNT = 8;
 
 let currentBaseWed = getThisWednesday();
-let hiddenCols = new Set();
+// hiddenColsByWeek[weekKey] = Set of "d{d}_a{a}"
+let hiddenColsByWeek = {};
 let allData = {};
 let summaryData = {};
 let members = Array.from({length: MEMBER_COUNT}, (_,i) => `멤버 ${i+1}`);
@@ -190,7 +198,19 @@ function getDates() {
 }
 function fmt(d) { return `${d.getMonth()+1}/${d.getDate()}`; }
 function colKey(d, a) { return `d${d}_a${a}`; }
-function isHidden(d, a) { return hiddenCols.has(colKey(d, a)); }
+
+// 현재 주의 hiddenCols 가져오기 (없으면 기본값으로 초기화)
+function getHiddenCols() {
+  const k = getWeekKey(currentBaseWed);
+  if (!hiddenColsByWeek[k]) {
+    // 기본값: 수목금월화의 오전 접힘
+    const def = new Set();
+    DEFAULT_HIDDEN_AM.forEach(d => def.add(colKey(d, 0)));
+    hiddenColsByWeek[k] = def;
+  }
+  return hiddenColsByWeek[k];
+}
+function isHidden(d, a) { return getHiddenCols().has(colKey(d, a)); }
 
 function getSchedData() {
   const k = getWeekKey(currentBaseWed);
@@ -202,7 +222,20 @@ function getSumData() {
   if (!summaryData[k]) summaryData[k] = Array.from({length:7}, ()=>['','']);
   return summaryData[k];
 }
-function cycleState(v) { return v===''?'O':v==='O'?'X':''; }
+
+// O → X → 미정 → 빈칸 순환
+function cycleState(v) {
+  if (v === '')   return 'O';
+  if (v === 'O')  return 'X';
+  if (v === 'X')  return '미정';
+  return '';
+}
+function stateClass(v) {
+  if (v === 'O')  return 'o';
+  if (v === 'X')  return 'x';
+  if (v === '미정') return 'mj';
+  return 'empty';
+}
 
 function renderAll() { updateWeekLabel(); renderSummary(); renderSchedTable(); }
 
@@ -213,29 +246,48 @@ function updateWeekLabel() {
   document.getElementById('summaryBadge').textContent = k === getWeekKey(getThisWednesday()) ? '이번 주' : fmt(dates[0]) + ' 주';
 }
 
+/* ── 상단 종합 일정 ── */
 function renderSummary() {
   const sd = getSumData();
   const dates = getDates();
   const t = document.getElementById('summaryTable');
   let h = '';
+
+  // Row 1: 날짜+요일 헤더
   h += '<tr><th class="sum-row-label" rowspan="3">일시</th>';
   for (let d=0; d<7; d++) {
-    h += `<th class="sum-date-th ${DAY_CLS[d]}"><span class="sum-date-num">${fmt(dates[d])}</span><span class="sum-date-day">${DAYS[d]}</span></th>`;
-  }
-  h += '</tr><tr>';
-  for (let d=0; d<7; d++) {
-    const v = sd[d][0];
-    h += `<td class="sum-input-td${v?' has-val':''}" id="sum_${d}_0"><input type="text" value="${esc(v)}" placeholder="오전" maxlength="30" oninput="updateSumCell(${d},0,this.value)"></td>`;
-  }
-  h += '</tr><tr>';
-  for (let d=0; d<7; d++) {
-    const v = sd[d][1];
-    h += `<td class="sum-input-td${v?' has-val':''}" id="sum_${d}_1"><input type="text" value="${esc(v)}" placeholder="오후" maxlength="30" oninput="updateSumCell(${d},1,this.value)"></td>`;
+    const cls = DAY_CLS[d];
+    h += `<th class="sum-date-th ${cls}">`;
+    h += `<span class="sum-date-num">${fmt(dates[d])}</span>`;
+    h += `<span class="sum-date-day">${DAYS[d]}</span>`;
+    h += `</th>`;
   }
   h += '</tr>';
+
+  // Row 2: 오전
+  h += '<tr>';
+  for (let d=0; d<7; d++) {
+    const v = sd[d][0];
+    h += `<td class="sum-input-td${v?' has-val':''}" id="sum_${d}_0">`;
+    h += `<input type="text" value="${esc(v)}" placeholder="오전" maxlength="30" oninput="updateSumCell(${d},0,this.value)">`;
+    h += `</td>`;
+  }
+  h += '</tr>';
+
+  // Row 3: 오후
+  h += '<tr>';
+  for (let d=0; d<7; d++) {
+    const v = sd[d][1];
+    h += `<td class="sum-input-td${v?' has-val':''}" id="sum_${d}_1">`;
+    h += `<input type="text" value="${esc(v)}" placeholder="오후" maxlength="30" oninput="updateSumCell(${d},1,this.value)">`;
+    h += `</td>`;
+  }
+  h += '</tr>';
+
   t.innerHTML = h;
 }
 
+/* ── 하단 멤버 스케줄 ── */
 function renderSchedTable() {
   const wd = getSchedData();
   const dates = getDates();
@@ -245,7 +297,8 @@ function renderSchedTable() {
   // Row 1: 요일 헤더 (colspan=2 고정)
   h += '<tr class="tr-day-head"><th class="col-name"></th>';
   for (let d=0; d<7; d++) {
-    h += `<th class="th-day ${DAY_CLS[d]}" colspan="2">${DAYS[d]} <span class="d-sub">${fmt(dates[d])}</span></th>`;
+    const cls = DAY_CLS[d];
+    h += `<th class="th-day ${cls}" colspan="2">${DAYS[d]} <span class="d-sub">${fmt(dates[d])}</span></th>`;
   }
   h += '</tr>';
 
@@ -255,10 +308,13 @@ function renderSchedTable() {
     for (let a=0; a<2; a++) {
       const hidden = isHidden(d, a);
       const key = colKey(d, a);
+      const label = a === 0 ? '오전' : '오후';
       if (!hidden) {
-        h += `<th class="th-ampm-toggle" onclick="toggleCol('${key}')"><div class="th-ampm-inner">${AMPM[a]} <span class="toggle-icon">▼</span></div></th>`;
+        h += `<th class="th-ampm-toggle" onclick="toggleCol('${key}')">`;
+        h += `<div class="th-ampm-inner">${label} <span class="toggle-icon">▼</span></div></th>`;
       } else {
-        h += `<th class="th-ampm-toggle collapsed" onclick="toggleCol('${key}')" style="width:22px;min-width:22px"><div class="th-ampm-inner slim"><span class="toggle-icon">▶</span></div></th>`;
+        h += `<th class="th-ampm-toggle collapsed" onclick="toggleCol('${key}')" style="width:22px;min-width:22px">`;
+        h += `<div class="th-ampm-inner slim"><span class="toggle-icon">▶</span></div></th>`;
       }
     }
   }
@@ -274,7 +330,7 @@ function renderSchedTable() {
         const key = colKey(d, a);
         if (!hidden) {
           const v = wd.schedules[m][d][a];
-          const cls = v==='O'?'o':v==='X'?'x':'empty';
+          const cls = stateClass(v);
           h += `<td class="td-sched ${cls}" onclick="toggleCell(${m},${d},${a})">${v||'·'}</td>`;
         } else {
           h += `<td class="td-collapsed" onclick="toggleCol('${key}')">▶</td>`;
@@ -292,7 +348,8 @@ function updateSumCell(d, a, val) {
   if (td) td.className = `sum-input-td${val?' has-val':''}`;
 }
 function toggleCol(key) {
-  hiddenCols.has(key) ? hiddenCols.delete(key) : hiddenCols.add(key);
+  const hc = getHiddenCols();
+  hc.has(key) ? hc.delete(key) : hc.add(key);
   renderSchedTable();
 }
 function toggleCell(m, d, a) {
@@ -334,6 +391,13 @@ function loadData() {
       if (parsed.members) members = parsed.members;
       if (parsed.data) allData = parsed.data;
       if (parsed.summaryData) summaryData = parsed.summaryData;
+      // hiddenColsByWeek 복원 (Set 직렬화 → 배열로 저장)
+      if (parsed.hiddenColsByWeek) {
+        hiddenColsByWeek = {};
+        Object.keys(parsed.hiddenColsByWeek).forEach(k => {
+          hiddenColsByWeek[k] = new Set(parsed.hiddenColsByWeek[k]);
+        });
+      }
     } else {
       showToast('데이터 로드 실패. 오프라인 모드로 시작합니다.', 'error');
     }
@@ -348,7 +412,12 @@ async function saveData() {
   btn.disabled = true;
   btn.querySelector('span').textContent = '저장 중...';
   try {
-    const payload = JSON.stringify({ members, data: allData, summaryData });
+    // Set → 배열로 직렬화
+    const hiddenSerial = {};
+    Object.keys(hiddenColsByWeek).forEach(k => {
+      hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
+    });
+    const payload = JSON.stringify({ members, data: allData, summaryData, hiddenColsByWeek: hiddenSerial });
     await fetch(APPS_URL, {
       method: 'POST',
       mode: 'no-cors',
