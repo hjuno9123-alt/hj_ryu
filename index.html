@@ -289,7 +289,12 @@ function getThisWednesday() {
   wed.setHours(0,0,0,0);
   return wed;
 }
-function getWeekKey(d) { return d.toISOString().slice(0,10); }
+function getWeekKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 function getDates() {
   return Array.from({length:7}, (_,i) => {
     const d = new Date(currentBaseWed);
@@ -646,7 +651,12 @@ function loadData() {
         });
       }
       if (parsed.hiddenMembers) hiddenMembers = new Set(parsed.hiddenMembers);
-      if (parsed.lastViewedWeek) { const p = parsed.lastViewedWeek.split('-'); if (p.length===3) { currentBaseWed = new Date(+p[0], +p[1]-1, +p[2]); currentBaseWed.setHours(0,0,0,0); } }
+      if (parsed.lastViewedWeek) {
+        const p = parsed.lastViewedWeek.split('-');
+        if (p.length === 3) {
+          currentBaseWed = new Date(+p[0], +p[1]-1, +p[2], 0, 0, 0, 0);
+        }
+      }
     } else {
       showToast('데이터 로드 실패. 오프라인 모드로 시작합니다.', 'error');
     }
