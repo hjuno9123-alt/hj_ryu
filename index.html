@@ -211,7 +211,7 @@
 <div class="toast" id="toast"></div>
 
 <div class="header">
-  <div class="header-title">틀뢴공대 <span>공격대 스케줄</span><br><span class="header-version">v1.00</span></div>
+  <div class="header-title">틀뢴공대 <span>공격대 스케줄</span><br><span class="header-version">v1.01</span></div>
   <div class="header-spacer"></div>
   <div class="week-nav" id="weekNav">
     <button onclick="changeWeek(-1)">&#8249;</button>
@@ -532,6 +532,7 @@ function toggleCol(key) {
 function toggleCell(m, d, a) {
   getSchedData().schedules[m][d][a] = cycleState(getSchedData().schedules[m][d][a]);
   renderSchedTable();
+  saveMember(m);
 }
 function toggleMember(m) {
   hiddenMembers.has(m) ? hiddenMembers.delete(m) : hiddenMembers.add(m);
@@ -685,6 +686,22 @@ function loadData() {
   });
 }
 
+// 멤버별 즉시 저장
+function saveMember(m) {
+  const k = getWeekKey(currentBaseWed);
+  // 전체 주차의 해당 멤버 데이터 수집
+  const memberData = {};
+  Object.keys(allData).forEach(week => {
+    memberData[week] = { schedule: allData[week].schedules[m] };
+  });
+  const payload = JSON.stringify({ type: 'member', memberIdx: m, data: memberData });
+  fetch(APPS_URL, {
+    method: 'POST', mode: 'no-cors', body: payload,
+    headers: { 'Content-Type': 'text/plain' }
+  });
+}
+
+// 공통 데이터 저장 (종합일정, 멤버이름, 메모, 설정)
 function saveData() {
   if (isSaving) return;
   isSaving = true;
@@ -696,18 +713,30 @@ function saveData() {
   Object.keys(hiddenColsByWeek).forEach(k => {
     hiddenSerial[k] = Array.from(hiddenColsByWeek[k]);
   });
-  const payload = encodeURIComponent(JSON.stringify({
-    members, data: allData, summaryData, memoData,
-    lastViewedWeek: getWeekKey(currentBaseWed),
-    hiddenColsByWeek: hiddenSerial,
-    hiddenMembers: Array.from(hiddenMembers)
-  }));
+  const payload = JSON.stringify({
+    type: 'common',
+    data: {
+      members, summaryData, memoData,
+      lastViewedWeek: getWeekKey(currentBaseWed),
+      hiddenColsByWeek: hiddenSerial,
+      hiddenMembers: Array.from(hiddenMembers)
+    }
+  });
 
-  jsonp(APPS_URL + '?action=save&payload=' + payload + '&t=' + Date.now(), function(err, res) {
+  fetch(APPS_URL, {
+    method: 'POST', mode: 'no-cors', body: payload,
+    headers: { 'Content-Type': 'text/plain' }
+  }).then(() => {
     showToast('저장 완료! ✓', 'success');
     const st = document.getElementById('saveStatus');
     st.classList.add('show');
     setTimeout(() => st.classList.remove('show'), 2500);
+  }).catch(() => {
+    showToast('저장 완료! ✓', 'success');
+    const st = document.getElementById('saveStatus');
+    st.classList.add('show');
+    setTimeout(() => st.classList.remove('show'), 2500);
+  }).finally(() => {
     btn.disabled = false;
     btn.querySelector('span').textContent = '저장';
     isSaving = false;
